@@ -1,23 +1,28 @@
 {
   "expo": {
-    "name": "anjzle",
+    "name": "Anjzle",
     "slug": "anjzle",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "splash": {
       "image": "./assets/splash.png",
-      "resizeMode": "contain",
+      "resizeMode": "cover",
       "backgroundColor": "#ffffff"
     },
     "updates": {
       "fallbackToCacheTimeout": 0
     },
-    "assetBundlePatterns": [
-      "**/*"
-    ],
+    "assetBundlePatterns": ["**/*"],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "usesIcloudStorage": true,
+      "bundleIdentifier": "com.anjzle.anjzle",
+      "buildNumber": "1.0.0"
+    },
+    "android": {
+      "package": "com.anjzle.anjzle",
+      "versionCode": 1
     },
     "web": {
       "favicon": "./assets/favicon.png"
