@@ -35,7 +35,6 @@ const Inquery = ({ route, navigation }) => {
 
   const removeFromSelection = (uri) =>
     setFiles(files.filter((file) => file.uri !== uri));
-
   const handleSend = () => {
     setLoading(true);
     let form = new FormData();
@@ -70,9 +69,12 @@ const Inquery = ({ route, navigation }) => {
         },
       })
       .then((res) => {
+
         isPay
           ? navigation.navigate("paymentOptions", {
               order_id: res.data.order_id,
+              service_id: service.id,
+              price: service.price
             })
           : navigation.navigate("orders", { status_id: 1 });
       })

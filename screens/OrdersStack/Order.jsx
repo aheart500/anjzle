@@ -391,6 +391,8 @@ const Order = ({ route, navigation }) => {
                     onPress={() => {
                       navigation.navigate("paymentOptions", {
                         order_id: order.id,
+                        service_id: order.service_id,
+                        price: order.service_price
                       });
                     }}
                     style={styles.headerButton}

@@ -14,9 +14,10 @@ export const colors = {
 };
 export const barHeight = Constants.statusBarHeight;
 const dev = false;
-const absolute_base = dev ? "http://192.168.1.2:3001" : "https://anjzle.com";
+const dev_port = 3003
+const absolute_base = dev ? "http://192.168.1.2:"+ dev_port : "https://anjzle.com";
 const api_base = dev
-  ? "http://192.168.1.2:3001/mobile"
+  ? "http://192.168.1.2:"+ dev_port+"/mobile"
   : "https://anjzle.com/mobile";
 
 export const api = {
@@ -34,6 +35,8 @@ export const api = {
   messages: api_base + "/msgs",
   uploads: absolute_base + "/uploads",
   contacts: api_base + "/contacts",
+  payments: api_base + "/payments",
+
 };
 export const images = {
   Articles,
