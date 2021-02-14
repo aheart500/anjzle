@@ -10,14 +10,16 @@ import Constants from "expo-constants";
 import { I18nManager } from "react-native";
 export const isArabic = I18nManager.isRTL;
 export const colors = {
-  primary: "#6493de",
+  primary: "#5484fc",
 };
 export const barHeight = Constants.statusBarHeight;
 const dev = false;
-const dev_port = 3003
-const absolute_base = dev ? "http://192.168.1.2:"+ dev_port : "https://anjzle.com";
+const dev_port = 3003;
+const absolute_base = dev
+  ? "http://192.168.1.2:" + dev_port
+  : "https://anjzle.com";
 const api_base = dev
-  ? "http://192.168.1.2:"+ dev_port+"/mobile"
+  ? "http://192.168.1.2:" + dev_port + "/mobile"
   : "https://anjzle.com/mobile";
 
 export const api = {
@@ -36,7 +38,6 @@ export const api = {
   uploads: absolute_base + "/uploads",
   contacts: api_base + "/contacts",
   payments: api_base + "/payments",
-
 };
 export const images = {
   Articles,

@@ -1,5 +1,5 @@
 import React from "react";
-import { View, StyleSheet, TouchableOpacity } from "react-native";
+import { View, StyleSheet, TouchableOpacity, Text } from "react-native";
 import { colors, isArabic } from "../Constants";
 
 const TapBar = ({ state, descriptors, navigation }) => {
@@ -9,6 +9,8 @@ const TapBar = ({ state, descriptors, navigation }) => {
         {state.routes.map((route, index) => {
           const { options } = descriptors[route.key];
           const Icon = options.tabBarIcon;
+          let title = options.title();
+
           const isFocused = state.index === index;
 
           const onPress = () => {
@@ -40,25 +42,28 @@ const TapBar = ({ state, descriptors, navigation }) => {
               key={index}
               style={styles.item}
             >
-              <Icon color={isFocused ? colors.primary : "#000"} />
+              <Icon color={isFocused ? colors.primary : "#a9a9aa"} />
+              <Text style={isFocused ? styles.focusedTitle : styles.title}>
+                {title}
+              </Text>
             </TouchableOpacity>
           );
         })}
       </View>
-      <View style={styles.blackLine}></View>
     </View>
   );
 };
 const styles = StyleSheet.create({
   mainContainer: {
-    backgroundColor: "#fff",
+    backgroundColor: "#fbfdff",
   },
   container: {
-    width: "90%",
-    marginHorizontal: "5%",
+    width: "100%",
+    backgroundColor: "#f1f4f9",
+    borderTopEndRadius: 30,
+    borderTopStartRadius: 30,
     paddingVertical: 10,
     flexDirection: isArabic ? "row" : "row-reverse",
-
     justifyContent: "space-around",
     alignItems: "center",
   },
@@ -67,12 +72,13 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
-  blackLine: {
-    backgroundColor: "#000",
-    width: "35%",
-    height: 5,
-    marginHorizontal: "32.5%",
-    borderRadius: 2,
+  title: {
+    color: "#b3b3b5",
+    fontFamily: "Cairo",
+  },
+  focusedTitle: {
+    color: colors.primary,
+    fontFamily: "Cairo",
   },
 });
 export default TapBar;

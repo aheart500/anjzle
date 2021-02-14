@@ -4,7 +4,9 @@ import UserContext from "../Contexts/User/UserContext";
 import { colors, isArabic } from "../Constants";
 import StartupCarousel from "../Components/StartupCarousel";
 import { StatusBar } from "expo-status-bar";
-import Icon from "../assets/logotrasparentsmall.png";
+import LogoWord from "../assets/logo_word.png";
+import LogoPic from "../assets/logo_pic.png";
+
 const Startup = ({ navigation }) => {
   const {
     started,
@@ -22,28 +24,33 @@ const Startup = ({ navigation }) => {
         <StartupCarousel interval={interval} setInterval={setInterval} />
       </View>
       <View style={styles.footerContainer}>
-        <Image source={Icon} style={styles.image} />
+        <View style={styles.logoContainer}>
+          <Image source={LogoWord} />
+          <Image source={LogoPic} />
+        </View>
         <View style={styles.footer}>
           <Text
             style={{
               color: "#fff",
               fontSize: 15,
               textAlign: "center",
-              marginTop: 15,
+              marginTop: 40,
               height: 60,
             }}
           >
             {" "}
             {interval === 1
-              ? "نقدم لك ما تريد من الخدمات الدعائيى بجودة وسرعة واتقان"
+              ? "نقدم لك كل ما هو جديد ومتطور في متطلباتك الدعائية"
               : "نقدم لك كل ما هو جديد ومتطور في متطلباتك الدعائية"}
           </Text>
           <TouchableOpacity
-            onPress={startApp}
+            onPress={() => {
+              startApp();
+            }}
             style={styles.button}
             activeOpacity={0.7}
           >
-            <Text style={styles.buttonText}> ابدأ معنا الآن</Text>
+            <Text style={styles.buttonText}> متابعة</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -65,7 +72,7 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: 50,
   },
   footer: {
-    marginTop: 30,
+    marginTop: 40,
     marginHorizontal: "15%",
     height: "100%",
     width: "70%",
@@ -85,13 +92,15 @@ const styles = StyleSheet.create({
     fontSize: 20,
     color: colors.primary,
   },
-  image: {
-    height: 85,
-    width: 50,
+  logoContainer: {
     position: "absolute",
-    left: "50%",
-    top: -30,
-    transform: [{ translateX: isArabic ? 25 : -25 }, { scale: 5 }],
+    width: "100%",
+
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    flexDirection: isArabic ? "row-reverse" : "row",
+    top: -15,
   },
 });
 

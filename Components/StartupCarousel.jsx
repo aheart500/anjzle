@@ -1,5 +1,12 @@
 import React, { useState, useRef, useEffect } from "react";
-import { ScrollView, View, Image, Text, StyleSheet } from "react-native";
+import {
+  ScrollView,
+  View,
+  Image,
+  Text,
+  StyleSheet,
+  Dimensions,
+} from "react-native";
 import firstImage from "../assets/images/Carousel/1.png";
 import secondImage from "../assets/images/Carousel/2.png";
 import { colors, isArabic } from "../Constants";
@@ -35,7 +42,6 @@ const StartupCarousel = ({ interval, setInterval }) => {
         style={{
           width: interval === i ? 25 : 10,
           backgroundColor: colors.primary,
-
           height: 10,
           elevation: 5,
           zIndex: 5,
@@ -52,7 +58,6 @@ const StartupCarousel = ({ interval, setInterval }) => {
         horizontal={true}
         contentContainerStyle={{
           width: "200%",
-          flexDirection: isArabic ? "row-reverse" : "row",
         }}
         showsHorizontalScrollIndicator={false}
         onContentSizeChange={(w) => setWidth(w)}
@@ -83,6 +88,7 @@ const StartupCarousel = ({ interval, setInterval }) => {
     </View>
   );
 };
+
 const styles = StyleSheet.create({
   slide: {
     maxWidth: "100%",
@@ -91,13 +97,15 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
     justifyContent: "center",
     alignItems: "center",
-
     marginTop: 1,
+
+    paddingTop: 30,
+    paddingHorizontal: 20,
   },
   image: {
-    maxWidth: "100%",
     borderRadius: 10,
-    height: 300,
+    height: "70%",
+    width: "100%",
   },
   itemText: {
     fontSize: 20,

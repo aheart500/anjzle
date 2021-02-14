@@ -8,7 +8,8 @@ import {
   KeyboardAvoidingView,
   Platform,
 } from "react-native";
-import HeaderImage from "../../assets/header.png";
+
+import LogoPic from "../../assets/logo_pic.png";
 import { colors, isArabic } from "../../Constants";
 import Icon from "react-native-vector-icons/Entypo";
 import IonIcon from "react-native-vector-icons/Ionicons";
@@ -44,12 +45,8 @@ const Login = ({ navigation }) => {
       behavior={Platform.OS === "ios" ? "padding" : "height"}
       style={styles.container}
     >
-      <View style={styles.header}>
-        <Image
-          source={HeaderImage}
-          resizeMode="cover"
-          style={styles.headerImage}
-        />
+      <View style={styles.logoContainer}>
+        <Image source={LogoPic} />
       </View>
       <View style={styles.mainContainer}>
         <View style={styles.main}>
@@ -168,6 +165,14 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
 
     overflow: "hidden",
+  },
+  logoContainer: {
+    width: "100%",
+    height: "30%",
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    flexDirection: "row",
   },
   header: {
     height: "30%",

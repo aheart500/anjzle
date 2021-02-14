@@ -69,12 +69,11 @@ const Inquery = ({ route, navigation }) => {
         },
       })
       .then((res) => {
-
         isPay
           ? navigation.navigate("paymentOptions", {
               order_id: res.data.order_id,
               service_id: service.id,
-              price: service.price
+              price: service.price,
             })
           : navigation.navigate("orders", { status_id: 1 });
       })
@@ -152,7 +151,7 @@ const Inquery = ({ route, navigation }) => {
       style={styles.container}
       behavior={Platform.OS === "ios" ? "padding" : "height"}
     >
-      <Header color={colors.primary} withText={true} />
+      <Header />
       <ScrollView>
         <BackArrow onPress={() => navigation.goBack()} />
         <Text

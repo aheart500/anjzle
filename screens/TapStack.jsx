@@ -3,7 +3,7 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import HomeStack from "./TapsStack/HomeStack";
 import ProfileStack from "./TapsStack/ProfileStack";
 
-import { Ionicons, Fontisto } from "@expo/vector-icons";
+import { Ionicons, Fontisto, FontAwesome } from "@expo/vector-icons";
 import TapBar from "../Components/TapBar";
 import Orders from "./OrdersStack/Orders";
 const TapsStack = () => {
@@ -21,8 +21,8 @@ const TapsStack = () => {
           } else if (route.name === "profile") {
             iconName = "md-person";
           } else if (route.name === "orders") {
-            iconName = "navigate";
-            return <Fontisto name={iconName} size={30} color={color} />;
+            iconName = "reorder";
+            return <FontAwesome name={iconName} size={30} color={color} />;
           } else if (route.name === "settings") {
             iconName = "ios-settings";
           } else if (route.name === "menu") {
@@ -30,6 +30,12 @@ const TapsStack = () => {
           }
 
           return <Ionicons name={iconName} size={30} color={color} />;
+        },
+        title: () => {
+          let routeName = "الرئيسية";
+          if (route.name === "orders") routeName = "الطلبات";
+          if (route.name === "profile") routeName = "الملف الشخصي";
+          return routeName;
         },
       })}
       backBehavior="initialRoute"

@@ -5,11 +5,12 @@ import {
   StyleSheet,
   TouchableOpacity,
   ActivityIndicator,
+  Image,
 } from "react-native";
 import GlobalStyles from "../../hooks/sharedStyles";
 import axios from "axios";
 import Header from "../../Components/Header";
-import { api, isArabic } from "../../Constants";
+import { api, colors, images, isArabic } from "../../Constants";
 import BackArrow from "../../Components/BackArrow";
 const Dep = ({ route, navigation }) => {
   const dep = route.params.dep;
@@ -32,35 +33,80 @@ const Dep = ({ route, navigation }) => {
 
   return (
     <View style={styles.container}>
-      <Header />
-      <BackArrow
-        style={{ color: "#fff" }}
-        onPress={() => navigation.goBack()}
-      />
-      <Text
+      <View
         style={{
-          ...GlobalStyles.whiteText,
-          textAlign: isArabic ? "left" : "right",
+          display: "flex",
+          flexDirection: isArabic ? "row" : "row-reverse",
+          justifyContent: "center",
+          alignItems: "center",
+          paddingTop: 50,
+          paddingBottom: 20,
+          backgroundColor: colors.primary,
+          borderBottomLeftRadius: 30,
+          borderBottomRightRadius: 30,
+          marginBottom: 20,
         }}
       >
-        {dep.title}
-      </Text>
+        <BackArrow
+          style={{ color: "#fff" }}
+          onPress={() => navigation.goBack()}
+        />
+        <Text
+          style={{
+            ...GlobalStyles.whiteText,
+            textAlign: isArabic ? "left" : "right",
+          }}
+        >
+          {dep.title}
+        </Text>
+      </View>
       {loading ? (
         <ActivityIndicator size="large" color="#fff" />
       ) : (
         services?.map((service) => {
           return (
             <TouchableOpacity
-              style={GlobalStyles.button}
+              style={[styles.card]}
               key={service.id}
               activeOpacity={0.6}
               onPress={() => navigation.navigate("service", { service })}
             >
-              <Text
-                style={{ ...GlobalStyles.blackCenter, fontWeight: "normal" }}
+              <Image
+                source={{
+                  uri: api.uploads + "/services/" + service.image,
+                }}
+                style={{
+                  width: "30%",
+                  height: "90%",
+                  marginHorizontal: 10,
+                }}
+              />
+              <View
+                style={{
+                  width: "65%",
+                }}
               >
-                {service.title}
-              </Text>
+                <Text
+                  style={{
+                    color: "#7aa2fd",
+                    fontFamily: "Cairo",
+                    fontSize: 20,
+                    textAlign: "right",
+                  }}
+                >
+                  {service.title ? service.title : ""}
+                </Text>
+                {service.desc && (
+                  <Text
+                    style={{
+                      fontFamily: "Cairo",
+                      textAlign: "right",
+                    }}
+                  >
+                    {service.desc}
+                  </Text>
+                )}
+              </View>
             </TouchableOpacity>
           );
         })
@@ -71,8 +117,27 @@ const Dep = ({ route, navigation }) => {
 
 const styles = StyleSheet.create({
   container: {
-    ...GlobalStyles.blueContainer,
+    ...GlobalStyles.whiteContainer,
     paddingTop: 0,
+  },
+  card: {
+    width: "90%",
+    marginHorizontal: "5%",
+    marginBottom: 10,
+    elevation: 2,
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 5,
+    },
+    shadowOpacity: 0.34,
+    shadowRadius: 6.27,
+    display: "flex",
+    flexDirection: isArabic ? "row" : "row-reverse",
+    height: 100,
+    alignItems: "center",
+    marginVertical: 5,
+    padding: 5,
   },
 });
 

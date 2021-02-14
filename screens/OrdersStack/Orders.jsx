@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useEffect, useContext, useRef } from "react";
 import {
   View,
   Text,
@@ -8,8 +8,9 @@ import {
   ActivityIndicator,
   Platform,
   ActionSheetIOS,
+  Image,
 } from "react-native";
-
+import MessageIcon from "../../assets/message.png";
 import GlobalStyles from "../../hooks/sharedStyles";
 import { api, colors, isArabic } from "../../Constants";
 import axios from "axios";
@@ -17,13 +18,15 @@ import UserContext from "../../Contexts/User/UserContext";
 import { AntDesign, FontAwesome } from "@expo/vector-icons";
 import { Picker } from "@react-native-community/picker";
 import { TextInput } from "react-native-gesture-handler";
+import { StatusBar } from "react-native";
 
 const Orders = ({ navigation, route }) => {
   const [orders, setOrders] = useState([]);
+  const [searching, setSearching] = useState(false);
   const {
     userState: { token, role_id },
   } = useContext(UserContext);
-
+  const searchInput = useRef();
   const [statusId, setStatusId] = useState(1);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -63,10 +66,13 @@ const Orders = ({ navigation, route }) => {
   };
 
   useEffect(() => {
-    fetchOrders(statusId, 0, true, search);
+    fetchOrders(statusId, 0, true, search ? search : null);
   }, [search]);
 
   const hangleStatusChange = (value) => {
+    if (searching) {
+      setSearching(false);
+    }
     setOrders([]);
     setStatusId(value);
     fetchOrders(value, 0, true, search);
@@ -76,12 +82,19 @@ const Orders = ({ navigation, route }) => {
       route.params.status_id
         ? hangleStatusChange(route.params.status_id)
         : null;
+      if (route.params.searching) {
+        setSearching(true);
+      }
     } else {
       hangleStatusChange(statusId);
     }
     setSearch("");
   }, [route.params]);
-
+  useEffect(() => {
+    if (searching && searchInput) {
+      searchInput.current.focus();
+    }
+  }, [searching]);
   const readOrder = (id) => {
     axios
       .post(
@@ -110,24 +123,10 @@ const Orders = ({ navigation, route }) => {
     );
   };
 
-  const UNREADED = () => (
-    <Text
-      style={{
-        marginRight: 20,
-        backgroundColor: colors.primary,
-        padding: 5,
-        borderRadius: 5,
-        color: "#fff",
-      }}
-    >
-      غير مقروء
-    </Text>
-  );
-
   return (
     <View style={GlobalStyles.whiteContainer}>
+      <StatusBar backgroundColor={colors.primary} />
       <View style={styles.header}>
-        <Text style={{ fontFamily: "Cairo", fontSize: 20 }}>طلباتي</Text>
         <TextInput
           style={{
             borderRadius: 2,
@@ -135,13 +134,38 @@ const Orders = ({ navigation, route }) => {
             borderWidth: 2,
             paddingHorizontal: 10,
             paddingVertical: 2,
+            width: "30%",
+            display: searching ? "flex" : "none",
           }}
           value={search}
+          ref={searchInput}
           onChangeText={(t) => {
             setSearch(t);
           }}
           placeholder="رقم الطلب"
         />
+        <AntDesign
+          name="search1"
+          color="white"
+          style={{
+            fontSize: 25,
+
+            display: searching ? "none" : "flex",
+          }}
+          onPress={() => {
+            setSearching(true);
+          }}
+        />
+        <Text
+          style={{
+            fontFamily: "Cairo",
+            fontSize: 20,
+            color: "white",
+            textAlign: "center",
+          }}
+        >
+          طلباتي
+        </Text>
         <View style={GlobalStyles.pickerContainerContainer}>
           <View style={GlobalStyles.pickerContainer}>
             {Platform.OS !== "ios" ? (
@@ -156,7 +180,6 @@ const Orders = ({ navigation, route }) => {
                 onValueChange={(value) => hangleStatusChange(value)}
               >
                 <Picker.Item label="كافة الطلبات" value={2} />
-
                 <Picker.Item label="الطلبات الملغية" value={4} />
               </Picker>
             ) : (
@@ -188,17 +211,19 @@ const Orders = ({ navigation, route }) => {
             <Text
               style={{
                 ...styles.tapText,
-                color: statusId === 1 ? "orange" : "black",
+                color: statusId === 1 ? "black" : "#bfc0c0",
               }}
             >
               الاستفسارات
             </Text>
-            <View
-              style={{
-                ...styles.blackLine,
-                backgroundColor: statusId === 1 ? "orange" : "black",
-              }}
-            ></View>
+            {statusId === 1 && (
+              <View
+                style={{
+                  ...styles.blackLine,
+                  backgroundColor: "black",
+                }}
+              ></View>
+            )}
           </TouchableOpacity>
           <TouchableOpacity
             style={styles.tap}
@@ -207,17 +232,19 @@ const Orders = ({ navigation, route }) => {
             <Text
               style={{
                 ...styles.tapText,
-                color: statusId === 2 ? "orange" : "black",
+                color: statusId === 2 ? "black" : "#bfc0c0",
               }}
             >
               قيد التنفيذ
             </Text>
-            <View
-              style={{
-                ...styles.blackLine,
-                backgroundColor: statusId === 2 ? "orange" : "black",
-              }}
-            ></View>
+            {statusId === 2 && (
+              <View
+                style={{
+                  ...styles.blackLine,
+                  backgroundColor: "black",
+                }}
+              ></View>
+            )}
           </TouchableOpacity>
           <TouchableOpacity
             style={styles.tap}
@@ -226,17 +253,19 @@ const Orders = ({ navigation, route }) => {
             <Text
               style={{
                 ...styles.tapText,
-                color: statusId === 3 ? "orange" : "black",
+                color: statusId === 3 ? "black" : "#bfc0c0",
               }}
             >
               المكتملة
             </Text>
-            <View
-              style={{
-                ...styles.blackLine,
-                backgroundColor: statusId === 3 ? "orange" : "black",
-              }}
-            ></View>
+            {statusId === 3 && (
+              <View
+                style={{
+                  ...styles.blackLine,
+                  backgroundColor: "black",
+                }}
+              ></View>
+            )}
           </TouchableOpacity>
         </View>
       )}
@@ -272,7 +301,10 @@ const Orders = ({ navigation, route }) => {
           onEndReached={() => {
             fetchOrders(statusId, orders.length, false, search);
           }}
-          renderItem={({ item }) => {
+          renderItem={({ item, index }) => {
+            const isUnread =
+              (item.readed === 0 && parseInt(role_id) === 1) ||
+              (item.user_readed === 0 && parseInt(role_id) !== 1);
             return (
               <TouchableOpacity
                 activeOpacity={0.5}
@@ -282,74 +314,70 @@ const Orders = ({ navigation, route }) => {
                     readOrder(item.id);
                   if (parseInt(role_id) === 1 && item.readed === 0)
                     readOrder(item.id);
-
+                  setSearching(false);
                   navigation.navigate("order", {
                     order: item,
                   });
                 }}
               >
                 <View
-                  style={{ flexDirection: isArabic ? "row" : "row-reverse" }}
-                >
-                  <FontAwesome
-                    name="calendar"
-                    size={24}
-                    color="black"
-                    style={{ marginRight: 20 }}
-                  />
-                  <Text style={{ marginRight: 10 }}>مدة التنفيذ غير محددة</Text>
-                  <AntDesign
-                    name="creditcard"
-                    size={24}
-                    color="black"
-                    style={{ marginRight: 20 }}
-                  />
-                  <Text style={{ marginRight: 10 }}>{item.status_name}</Text>
-                </View>
-                <View
                   style={{
-                    flexDirection: isArabic ? "row" : "row-reverse",
-                    alignItems: "center",
+                    width: "85%",
                   }}
                 >
                   <Text
                     style={{
-                      marginHorizontal: 20,
+                      alignSelf: isArabic ? "flex-start" : "flex-end",
+                      color: "#bfc0c0",
                     }}
                   >
+                    {isUnread && (
+                      <Text
+                        style={{
+                          fontSize: 20,
+                          fontFamily: "Cairo",
+                          color: colors.primary,
+                        }}
+                      >
+                        *
+                      </Text>
+                    )}
                     {item.id}
                   </Text>
                   <Text
                     style={{
                       fontSize: 20,
-                      fontWeight: "bold",
+                      fontFamily: "Cairo",
+                      color: colors.primary,
+                      textAlign: "right",
                     }}
                   >
                     {item.service_title}
                   </Text>
-                  {item.readed === 0 && parseInt(role_id) === 1 && <UNREADED />}
-                  {item.user_readed === 0 && parseInt(role_id) !== 1 && (
-                    <UNREADED />
-                  )}
-                </View>
-
-                <View
-                  style={{
-                    backgroundColor: colors.primary,
-                    marginHorizontal: 90,
-                    marginVertical: 5,
-                    borderRadius: 10,
-                  }}
-                >
-                  <Text
-                    style={{ textAlign: "center", fontSize: 20, color: "#fff" }}
+                  <View
+                    style={{
+                      flexDirection: isArabic ? "row" : "row-reverse",
+                    }}
                   >
-                    إرسال رسالة
-                  </Text>
+                    <FontAwesome name="calendar" size={24} color="#bcbcbc" />
+                    <Text style={{ marginHorizontal: 10, color: "#bcbcbc" }}>
+                      مدة التنفيذ غير محددة
+                    </Text>
+                  </View>
+                  <View
+                    style={{
+                      flexDirection: isArabic ? "row" : "row-reverse",
+                    }}
+                  >
+                    <AntDesign name="creditcard" size={24} color="#bcbcbc" />
+                    <Text style={{ marginHorizontal: 10, color: "#bcbcbc" }}>
+                      {item.status_name}
+                    </Text>
+                  </View>
                 </View>
-                <Text style={{ textAlign: "center", marginVertical: 5 }}>
-                  التعديل متاح خلال 24 ساعة فقط من تاريخ تسليم الخدمة
-                </Text>
+                <View>
+                  <Image source={MessageIcon} />
+                </View>
               </TouchableOpacity>
             );
           }}
@@ -362,19 +390,19 @@ const Orders = ({ navigation, route }) => {
 const styles = StyleSheet.create({
   header: {
     flexDirection: isArabic ? "row" : "row-reverse",
-
     justifyContent: "space-between",
     paddingHorizontal: 10,
-    marginTop: 20,
-    borderBottomWidth: 1,
+    paddingTop: 20,
     paddingBottom: 15,
-    borderBottomColor: "#000",
+    backgroundColor: colors.primary,
+    borderBottomRightRadius: 20,
+    borderBottomLeftRadius: 20,
   },
   taps: {
     flexDirection: isArabic ? "row" : "row-reverse",
-
-    width: "100%",
+    width: "90%",
     backgroundColor: "#fff",
+    marginHorizontal: "5%",
   },
   tap: {
     marginTop: 10,
@@ -384,16 +412,22 @@ const styles = StyleSheet.create({
     fontSize: 15,
     padding: 10,
     textAlign: "center",
+    fontFamily: "Cairo",
   },
   blackLine: {
-    height: 5,
-    marginHorizontal: "25%",
+    height: 2,
+    marginHorizontal: "10%",
     borderRadius: 2,
   },
   card: {
     backgroundColor: "#fff",
     padding: 10,
     marginVertical: 5,
+    marginHorizontal: "5%",
+
+    flexDirection: isArabic ? "row" : "row-reverse",
+    alignItems: "center",
+    justifyContent: "space-between",
   },
 });
 

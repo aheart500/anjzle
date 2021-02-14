@@ -73,39 +73,34 @@ const Home = ({ navigation }) => {
         activeOpacity={0.5}
         onPress={handlePress}
       >
-        <Text style={styles.cardText}>{title}</Text>
         <Image style={styles.cardImage} source={img} />
+        <Text style={styles.cardText}>{title}</Text>
       </TouchableOpacity>
     );
   };
 
   return (
     <View style={styles.container}>
-      <Header />
-      <Text
-        style={{
-          ...GlobalStyles.whiteText,
-          textAlign: isArabic ? "left" : "right",
-        }}
-      >
-        الرئيسية
-      </Text>
+      <Header
+        searchIconPress={() =>
+          navigation.navigate("orders", {
+            searching: true,
+          })
+        }
+      />
+
       <ScrollView style={styles.scroll}>
         {loading ? (
           <ActivityIndicator size="large" color={colors.primary} />
         ) : (
-          <>
+          <View style={styles.cardsContianer}>
             {deps
               ?.filter((dep) => dep.is_active === 1)
               .sort((a, b) => a.order - b.order)
               .map((dep, i) => (
                 <Card dep={dep} key={i} />
               ))}
-
-            <Card myId={1} />
-            <Card myId={2} />
-            <Card myId={3} />
-          </>
+          </View>
         )}
       </ScrollView>
     </View>
@@ -115,22 +110,26 @@ const deviceWidth = Dimensions.get("window").width;
 
 const styles = StyleSheet.create({
   container: {
-    ...GlobalStyles.blueContainer,
+    ...GlobalStyles.whiteContainer,
     paddingTop: 0,
   },
   scroll: {
-    backgroundColor: "#fff",
+    backgroundColor: "#fbfdff",
     borderTopLeftRadius: 20,
     paddingTop: 10,
   },
-  card: {
-    width: "90%",
-    height: 50,
+  cardsContianer: {
+    display: "flex",
+    flexDirection: "row",
+    flexWrap: "wrap",
     marginHorizontal: "5%",
+  },
+  card: {
+    width: (deviceWidth * 50) / 100 - 35,
+    height: 200,
+    backgroundColor: "white",
     marginVertical: 4,
-    borderTopLeftRadius: 20,
-    borderBottomRightRadius: 20,
-    flexDirection: isArabic ? "row" : "row-reverse",
+    marginHorizontal: 5,
     justifyContent: "space-between",
     alignItems: "center",
     paddingVertical: 10,
@@ -143,14 +142,16 @@ const styles = StyleSheet.create({
     },
     shadowOpacity: 0.34,
     shadowRadius: 6.27,
+    borderRadius: 10,
   },
   cardText: {
     fontSize: deviceWidth < 420 ? 17 : 20,
     fontFamily: "Cairo",
+    textAlign: "center",
   },
   cardImage: {
-    width: "10%",
-    height: "90%",
+    width: "90%",
+    height: "50%",
   },
 });
 

@@ -1,5 +1,11 @@
 import React, { useContext, useEffect, useState } from "react";
-import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  ScrollView,
+} from "react-native";
 import {
   FontAwesome,
   Entypo,
@@ -13,9 +19,11 @@ import Header from "../../Components/Header";
 import { colors, api, isArabic } from "../../Constants";
 import { Avatar } from "react-native-elements";
 import axios from "axios";
+import ProfileOptions from "./ProfileOptions";
+
 const Profile = ({ navigation }) => {
   const {
-    userState: { image, name, token, role_id },
+    userState: { image, name, token, role_id, email },
     Logout,
   } = useContext(UserContext);
   const [unreadedOrders, setUnreadedOrders] = useState(0);
@@ -96,17 +104,20 @@ const Profile = ({ navigation }) => {
   };
   return (
     <View style={styles.container}>
-      <Header color={colors.primary} radius={20} height={120} withText={true} />
+      <Header
+        color={colors.primary}
+        radius={20}
+        height={120}
+        title="الملف الشخصي"
+      />
       <View
         style={{
           flexDirection: isArabic ? "row" : "row-reverse",
-
-          position: "absolute",
-          top: 60,
           justifyContent: "space-between",
           alignItems: "center",
           width: "90%",
           marginHorizontal: "5%",
+          marginTop: 10,
         }}
       >
         <Avatar
@@ -115,89 +126,138 @@ const Profile = ({ navigation }) => {
           title={name.substring(0, 1)}
           rounded
         />
-        <Text style={{ fontWeight: "bold", fontSize: 20, color: "#fff" }}>
-          {name}
-        </Text>
+        <View
+          style={{
+            width: "70%",
+            alignItems: isArabic ? "flex-start" : "flex-end",
+          }}
+        >
+          <Text
+            style={{
+              fontSize: 30,
+              color: "#515c6f",
+              fontWeight: "bold",
+            }}
+          >
+            {name}
+          </Text>
+          <Text
+            style={{
+              fontSize: 15,
+              color: "#515c6f",
+              marginTop: 7,
+              fontFamily: "Cairo",
+              marginBottom: 15,
+            }}
+          >
+            {email}
+          </Text>
+          <TouchableOpacity
+            onPress={() => navigation.navigate("editProfile")}
+            style={{
+              backgroundColor: "white",
+              width: 150,
+
+              padding: 4,
+              borderRadius: 20,
+              borderWidth: 1,
+              borderColor: "gray",
+            }}
+          >
+            <Text
+              style={{ color: "gray", fontWeight: "bold", textAlign: "center" }}
+            >
+              تعديل البروفايل
+            </Text>
+          </TouchableOpacity>
+        </View>
       </View>
-      <TouchableOpacity
-        onPress={() => navigation.navigate("editProfile")}
-        style={{
-          backgroundColor: colors.primary,
-          width: 150,
-          alignSelf: isArabic ? "flex-start" : "flex-end",
-          marginTop: 25,
-          marginHorizontal: 10,
-          padding: 4,
-          borderRadius: 4,
-        }}
-      >
-        <Text style={{ ...GlobalStyles.white, textAlign: "center" }}>
-          ملفي الشخصي
-        </Text>
-      </TouchableOpacity>
-      <View style={styles.list}>
-        <TouchableOpacity
-          style={styles.listItem}
-          onPress={() => navigation.navigate("orders", { status_id: 1 })}
-        >
-          <FontAwesome name="envelope" size={24} color={colors.primary} />
-          <Text style={styles.listText}> الرسائل</Text>
 
-          {unreadedMessages > 0 && (
-            <Text style={styles.badge}>{unreadedMessages}</Text>
+      <ScrollView style={styles.list}>
+        <View style={styles.box}>
+          <ProfileOptions
+            iconName="allOrders"
+            title="أرشيف الطلبات"
+            action={() =>
+              navigation.navigate("orders", { status_id: 1, searching: false })
+            }
+          />
+          <ProfileOptions
+            iconName="pendingOrders"
+            title="قيد التنفيذ"
+            action={() =>
+              navigation.navigate("orders", { status_id: 2, searching: false })
+            }
+          />
+          <ProfileOptions
+            iconName="completedOrders"
+            title="طلبات منتهية"
+            action={() =>
+              navigation.navigate("orders", { status_id: 3, searching: false })
+            }
+          />
+        </View>
+        <View style={styles.box}>
+          <ProfileOptions
+            iconName="who"
+            title="من نحن"
+            action={() => navigation.navigate("who")}
+          />
+          <ProfileOptions
+            iconName="contact"
+            title="تواصل معنا"
+            action={() => navigation.navigate("contact")}
+          />
+
+          <ProfileOptions
+            iconName="privacy"
+            title="الشروط والخصوصية"
+            action={() => navigation.navigate("privacy")}
+          />
+
+          {isAdmin && (
+            <>
+              <TouchableOpacity
+                style={styles.listItem}
+                onPress={() => navigation.navigate("contactUsList")}
+              >
+                <Feather name="phone-call" size={24} color="gray" />
+                <Text style={styles.listText}> رسائل اتصل بنا</Text>
+
+                {unreadedContacts > 0 && (
+                  <Text style={styles.badge}>{unreadedContacts}</Text>
+                )}
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.listItem}
+                onPress={() => navigation.navigate("usersList")}
+              >
+                <AntDesign name="addusergroup" size={24} color="gray" />
+                <Text style={styles.listText}>المستخدمين</Text>
+
+                {usersCount > 0 && (
+                  <Text style={styles.badge}>{usersCount}</Text>
+                )}
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.listItem}
+                onPress={() => navigation.navigate("depsAndServices")}
+              >
+                <FontAwesome name="reorder" size={24} color="gray" />
+                <Text style={styles.listText}> الأقسام والخدمات</Text>
+              </TouchableOpacity>
+            </>
           )}
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={styles.listItem}
-          onPress={() => navigation.navigate("orders", { status_id: 2 })}
-        >
-          <Entypo name="shopping-cart" size={24} color={colors.primary} />
-          <Text style={styles.listText}> سلة المشتريات</Text>
 
-          {unreadedOrders > 0 && (
-            <Text style={styles.badge}>{unreadedOrders}</Text>
-          )}
-        </TouchableOpacity>
-        {isAdmin && (
-          <>
-            <TouchableOpacity
-              style={styles.listItem}
-              onPress={() => navigation.navigate("contactUsList")}
-            >
-              <Feather name="phone-call" size={24} color={colors.primary} />
-              <Text style={styles.listText}> رسائل اتصل بنا</Text>
-
-              {unreadedContacts > 0 && (
-                <Text style={styles.badge}>{unreadedContacts}</Text>
-              )}
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={styles.listItem}
-              onPress={() => navigation.navigate("usersList")}
-            >
-              <AntDesign name="addusergroup" size={24} color={colors.primary} />
-              <Text style={styles.listText}>المستخدمين</Text>
-
-              {usersCount > 0 && <Text style={styles.badge}>{usersCount}</Text>}
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={styles.listItem}
-              onPress={() => navigation.navigate("depsAndServices")}
-            >
-              <FontAwesome name="reorder" size={24} color={colors.primary} />
-              <Text style={styles.listText}> الأقسام والخدمات</Text>
-            </TouchableOpacity>
-          </>
-        )}
-
-        <TouchableOpacity
-          style={styles.listItem}
-          onPress={() => handleLogout()}
-        >
-          <Ionicons name="ios-log-out" size={24} color={colors.primary} />
-          <Text style={styles.listText}> تسجيل الخروج</Text>
-        </TouchableOpacity>
-      </View>
+          <TouchableOpacity
+            style={styles.listItem}
+            onPress={() => handleLogout()}
+          >
+            <Ionicons name="ios-log-out" size={24} color="gray" />
+            <Text style={styles.listText}> تسجيل الخروج</Text>
+          </TouchableOpacity>
+        </View>
+      </ScrollView>
     </View>
   );
 };
@@ -205,9 +265,9 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     paddingTop: 0,
+    backgroundColor: "#fff",
   },
   list: {
-    backgroundColor: "#fff",
     marginVertical: 20,
 
     paddingVertical: 5,
@@ -236,6 +296,21 @@ const styles = StyleSheet.create({
     textAlignVertical: "center",
     borderRadius: 20,
     paddingHorizontal: 10,
+  },
+  box: {
+    elevation: 2,
+    borderRadius: 5,
+    backgroundColor: "white",
+    marginBottom: 5,
+    width: "90%",
+    marginHorizontal: "5%",
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 5,
+    },
+    shadowOpacity: 0.34,
+    shadowRadius: 3.27,
   },
 });
 export default Profile;
