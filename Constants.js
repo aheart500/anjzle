@@ -33,7 +33,7 @@ export const api = {
   getDeps: api_base + "/deps",
   getServices: (dep_id) => api_base + "/services/" + dep_id,
   services: api_base + "/services/",
-  addOrder: api_base + "/orders",
+  addOrder: api_base + "/orders/",
   messages: api_base + "/msgs",
   uploads: absolute_base + "/uploads",
   contacts: api_base + "/contacts",

@@ -70,13 +70,11 @@ const Inquery = ({ route, navigation }) => {
           "Content-Type": "multipart/form-data",
         },
         onUploadProgress: (r) => {
-          console.log(JSON.stringify(r));
           setLod(Math.round((r.loaded * 1000) / r.total));
-          console.log(lod);
         },
       })
       .then((res) => {
-        console.log("res", { data });
+        console.log("data", JSON.stringify(res.data));
         isPay
           ? navigation.navigate("paymentOptions", {
               order_id: res.data.order_id,

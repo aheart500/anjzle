@@ -1,0 +1,12 @@
+POST https://anjzle.com/mobile/orders/
+Content-Type: application/json
+Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MTAsIm5hbWUiOiJOYXNzZXIiLCJlbWFpbCI6ImFoZWFydDUwMEB5YWhvby5jb20iLCJyb2xlX2lkIjoiMCIsImlhdCI6MTYyOTMzNTAwN30.Ig8zdyj-miGNOKTODLqEsjTmeMRZgcowllmFa5cd0_Q
+
+{
+    "service_id": 15,
+    "status_id": 1,
+    "is_canceled": 0,
+    "readed": 0,
+    "content": "message",
+    "user_readed": 1
+}
