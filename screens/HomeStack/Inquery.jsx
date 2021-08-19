@@ -17,6 +17,7 @@ import BackArrow from "../../Components/BackArrow";
 import { colors, api, isArabic } from "../../Constants";
 import { Input } from "react-native-elements";
 import { Picker } from "@react-native-community/picker";
+import * as Progress from "react-native-progress";
 
 import * as DocumentPicker from "expo-document-picker";
 import { AntDesign, FontAwesome5 } from "@expo/vector-icons";
@@ -32,7 +33,8 @@ const Inquery = ({ route, navigation }) => {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
-
+  const [lod, setLod] = useState(0.0);
+  // console.log("token : "+token)
   const removeFromSelection = (uri) =>
     setFiles(files.filter((file) => file.uri !== uri));
   const handleSend = () => {
@@ -67,8 +69,14 @@ const Inquery = ({ route, navigation }) => {
           Authorization: "bearer " + token,
           "Content-Type": "multipart/form-data",
         },
+        onUploadProgress: (r) => {
+          console.log(JSON.stringify(r));
+          setLod(Math.round((r.loaded * 1000) / r.total));
+          console.log(lod);
+        },
       })
       .then((res) => {
+        console.log("res", { data });
         isPay
           ? navigation.navigate("paymentOptions", {
               order_id: res.data.order_id,
@@ -135,10 +143,10 @@ const Inquery = ({ route, navigation }) => {
           copyToCacheDirectory: false,
         });
         if (result.type === "cancel") return;
-        if (result.size > 4000000) {
+        /*  if (result.size > 4000000) {
           setError("حجم الملف أكبر من 4 ميجا");
           return;
-        }
+        } */
         setFiles(files.concat([result]));
       } catch (e) {
         console.log("e", e);
@@ -236,10 +244,15 @@ const Inquery = ({ route, navigation }) => {
           onPress={() => handleUpload()}
         >
           {files.length === 0 ? (
-            <Text
+            /*  <Text
               style={{ fontSize: 15, fontFamily: "Cairo", textAlign: "center" }}
             >
               قم بالضغط هنا لتقوم بتحديد الملفات، لا يسمح بملفات اكبر من 4 ميجا
+            </Text> */
+            <Text
+              style={{ fontSize: 15, fontFamily: "Cairo", textAlign: "center" }}
+            >
+              قم بالضغط هنا لتقوم بتحديد الملفات
             </Text>
           ) : (
             files.map((file, i) => {
@@ -306,6 +319,18 @@ const Inquery = ({ route, navigation }) => {
         >
           {error}
         </Text>
+        <View
+          style={{
+            width: "100%",
+            marginBottom: 20,
+            display: loading ? "flex" : "none",
+            flexDirection: "row",
+            justifyContent: "center",
+          }}
+        >
+          <Progress.Bar progress={lod / 1000} width={200} height={16} />
+          <Text style={{ marginLeft: 10 }}>{lod / 10}%</Text>
+        </View>
         <View
           style={{
             flexDirection: isArabic ? "row" : "row-reverse",

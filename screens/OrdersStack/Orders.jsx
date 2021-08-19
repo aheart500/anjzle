@@ -334,9 +334,9 @@ const Orders = ({ navigation, route }) => {
                     {isUnread && (
                       <Text
                         style={{
-                          fontSize: 20,
+                          fontSize: 25,
                           fontFamily: "Cairo",
-                          color: colors.primary,
+                          color: "red",
                         }}
                       >
                         *

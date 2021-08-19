@@ -66,7 +66,7 @@ const PaymentOptions = ({ route, navigation }) => {
         axiosConfig
       )
       .then((res) => {
-        Alert.alert("", "تم الدفع بنجاح - كود المعاملة: " + id);
+        // Alert.alert("", "تم الدفع بنجاح - كود المعاملة: " + id);
         setLoading(false);
         navigation.navigate("orders", { status_id: 2 });
       })
@@ -76,30 +76,53 @@ const PaymentOptions = ({ route, navigation }) => {
   };
   const handleWebViewNav = (navState) => {
     const { url } = navState;
-    if (url.includes("anjzle.com")) {
+    // if (url.includes("anjzle.com/result")) {
+      if (url.includes("anjzle.com")) {
       webNavRef.current.stopLoading();
+      const pay = webViewState.data_brands === "VISA MASTER" ? "VISA" : "MADA";
+      const pload = {
+        checkoutId: webViewState.checkoutId,
+        order_id,
+        service_id,
+        amount: price,
+        payment_method:
+          webViewState.data_brands === "VISA MASTER" ? "visa_master" : "mada",
+      };
       axios
-        .post(
-          api.payments + "/check",
-          {
-            checkoutId: webViewState.checkoutId,
-            order_id,
-            service_id,
-            amount: price,
-            payment_method:
-              webViewState.data_brands === "VISA MASTER"
-                ? "visa_master"
-                : "mada",
-          },
-          axiosConfig
-        )
+        /*  .get(
+          "https://anjzle.com/result2/" + pay + "/" + webViewState.checkoutId,
+          pload,
+          // axiosConfig
+          {}
+        ) */
+        .post(api.payments + "/check", pload, axiosConfig)
+      /* axios
+        .get(
+          "https://anjzle.com/result2/" + pay + "/" + webViewState.checkoutId
+        ) */
         .then(({ data }) => {
+          // webNavRef.current.stopLoading();
           setWebViewState({ shown: false });
-          if (!data.result.description.includes("success")) {
+          console.log("Valabji TEST");
+          console.log(data);
+          if (
+            !data.result.description.includes("success") &&
+            !data.result.code.includes("000.000.000")&&
+            !data.result.code.includes("200.300.404")
+          ) {
+            // if (data.includes("Fail") && !data.includes("Code")) {
             Alert.alert(
               "",
               "فشل الدفع، برجاء التحقق من بيانات الدفع ووجود رصيد كافي وحاول مجدداً"
             );
+            Alert.alert("", data.result.description);
+            /* Alert.alert("", data);
+            setTimeout(() => {
+              // Alert.alert("", JSON.stringify(pload));
+            }, 1000);
+            setTimeout(() => {
+              // Alert.alert("", JSON.stringify(data));
+            }, 2000); */
             setLoading(false);
           } else {
             payment_finish(data.id);
@@ -111,21 +134,50 @@ const PaymentOptions = ({ route, navigation }) => {
   const handleBuy = (brands) => {
     if (!order_id) return;
     setLoading(true);
-    axios
+    /*  axios
+      // .post(
+      .get(
+        // api.payments + "/pay",
+        "https://anjzle.com/send_cardname2/" + brands === "visa_master"
+          ? "VISA"
+          : "MADA" + "/" + service_id + "/" + price + "",
+        { amount: price, payment_method: brands },
+        // axiosConfig
+        {
+
+        }
+      ) */
+    const brand = brands === "visa_master" ? "VISA" : "MADA";
+    const url =
+      "https://anjzle.com/send_cardname2/" +
+      brand +
+      "/" +
+      service_id +
+      "/" +
+      price;
+    // axios
+      // .get(url)
+      axios
       .post(
         api.payments + "/pay",
         { amount: price, payment_method: brands },
         axiosConfig
-      )
+      ) 
       .then(({ data }) => {
         setWebViewState({
           shown: true,
           checkoutId: data.id,
           data_brands: brands === "visa_master" ? "VISA MASTER" : "MADA",
         });
+        // Alert.alert("", JSON.stringify(data));
+        // console.log(url);
       })
-      .catch((err) => console.log(err));
+      .catch((err) => {
+        console.log(err);
+        // Alert.alert("Error", url);
+      });
   };
+  const brand = webViewState.data_brands === "visa_master" ? "VISA" : "MADA";
 
   return (
     <View style={GlobalStyles.whiteContainer}>
@@ -140,6 +192,15 @@ const PaymentOptions = ({ route, navigation }) => {
                 webViewState.checkoutId
               ),
             }}
+            /* source={{
+              uri:
+                "https://anjzle.com/send_cardname/" +
+                brand +
+                "/" +
+                service_id +
+                "/" +
+                price,
+            }} */
             onNavigationStateChange={handleWebViewNav}
             originWhitelist={["*"]}
             style={{ marginTop: 20 }}

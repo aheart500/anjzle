@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   ActivityIndicator,
   Image,
+  ScrollView
 } from "react-native";
 import GlobalStyles from "../../hooks/sharedStyles";
 import axios from "axios";
@@ -33,6 +34,9 @@ const Dep = ({ route, navigation }) => {
 
   return (
     <View style={styles.container}>
+      <ScrollView>
+
+   
       <View
         style={{
           display: "flex",
@@ -111,6 +115,7 @@ const Dep = ({ route, navigation }) => {
           );
         })
       )}
+         </ScrollView>
     </View>
   );
 };

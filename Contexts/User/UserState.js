@@ -1,7 +1,7 @@
 import React, { useReducer, useState, useEffect } from "react";
 import UserContext from "./UserContext";
 import UserReducer from "./UserReducer";
-import AsyncStorage from "@react-native-community/async-storage";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { ActivityIndicator } from "react-native";
 import { useFonts } from "@expo-google-fonts/inter";
 import Cairo from "../../assets/fonts/Cairo-Regular.ttf";

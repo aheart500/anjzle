@@ -46,11 +46,11 @@ const Register = ({ navigation }) => {
       name.onChangeText("");
       password1.onChangeText("");
       password2.onChangeText("");
-      navigation.navigate("resetPasswordCode", {
+      navigation.navigate("login", {
         code: data.verified_code,
         new: true,
         email: email.value,
-      });
+      },);
     } catch (e) {
       setLoading(false);
       console.log(e);
@@ -67,6 +67,7 @@ const Register = ({ navigation }) => {
       },
     };
   };
+  
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : "height"}
@@ -147,6 +148,7 @@ const Register = ({ navigation }) => {
           >
             <Text style={GlobalStyles.blackCenter}>
               {loading ? "جاري الحفظ..." : "التالي"}
+              
             </Text>
           </TouchableOpacity>
         </ScrollView>

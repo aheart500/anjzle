@@ -22,6 +22,8 @@ import * as MediaLibrary from "expo-media-library";
 import * as Permissions from "expo-permissions";
 import * as ImagePicker from "expo-image-picker";
 import * as FileSystem from "expo-file-system";
+import * as Progress from "react-native-progress";
+
 import GlobalStyles from "../../hooks/sharedStyles";
 import { Avatar, Input, Rating } from "react-native-elements";
 import { api, colors, isArabic } from "../../Constants";
@@ -38,6 +40,7 @@ const Order = ({ route, navigation }) => {
   const [error, setError] = useState("");
   const [message, setMessage] = useState("");
   const [files, setFiles] = useState([]);
+  const [lod, setLod] = useState(0.0);
 
   const flatRef = useRef();
 
@@ -77,10 +80,10 @@ const Order = ({ route, navigation }) => {
         copyToCacheDirectory: false,
       });
       if (result.type === "cancel") return;
-      if (result.size > 4000000) {
+      /* if (result.size > 4000000) {
         setError("حجم الملف أكبر من 4 ميجا");
         return;
-      }
+      } */
       setFiles(files.concat([result]));
     } catch (e) {
       console.log("e", e);
@@ -118,6 +121,11 @@ const Order = ({ route, navigation }) => {
         headers: {
           Authorization: "bearer " + token,
           "Content-Type": "multipart/form-data",
+        },
+        onUploadProgress: (r) => {
+          console.log(JSON.stringify(r));
+          setLod(Math.round((r.loaded * 1000) / r.total));
+          console.log(lod);
         },
       })
       .then((res) => {
@@ -392,7 +400,7 @@ const Order = ({ route, navigation }) => {
                       navigation.navigate("paymentOptions", {
                         order_id: order.id,
                         service_id: order.service_id,
-                        price: order.service_price
+                        price: order.service_price,
                       });
                     }}
                     style={styles.headerButton}
@@ -513,7 +521,18 @@ const Order = ({ route, navigation }) => {
           onChangeText={(t) => setMessage(t)}
           errorMessage={error}
         />
-
+        <View
+          style={{
+            width: "100%",
+            marginBottom: 20,
+            display: messageLoading ? "flex" : "none",
+            flexDirection: "row",
+            justifyContent: "center",
+          }}
+        >
+          <Progress.Bar progress={lod / 1000} width={200} height={16} />
+          <Text style={{ marginLeft: 10 }}>{lod / 10}%</Text>
+        </View>
         <ScrollView
           contentContainerStyle={{
             flexDirection: isArabic ? "row" : "row-reverse",

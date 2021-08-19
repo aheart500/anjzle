@@ -76,6 +76,7 @@ const Home = ({ navigation }) => {
         <Image style={styles.cardImage} source={img} />
         <Text style={styles.cardText}>{title}</Text>
       </TouchableOpacity>
+      
     );
   };
 
