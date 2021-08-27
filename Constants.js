@@ -24,9 +24,9 @@ const api_base = dev
 
 export const api = {
   api_base,
-  getUsers: api_base + "/users",
+  getUsers: api_base + "/users/",
   login: api_base + "/users/login",
-  register: api_base + "/users",
+  register: api_base + "/users/",
   resendCode: api_base + "/users/resendCode",
   updatePassword: api_base + "/users/updatePassword",
   getUser: api_base + "/users/user",
